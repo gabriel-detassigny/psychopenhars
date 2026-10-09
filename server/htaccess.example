@@ -1,0 +1,35 @@
+# Full target .htaccess for the site root. Merge with anything host-specific
+# already present in the live file (compare before overwriting).
+
+# --- psychopenhars: legacy URL redirects (place ABOVE "# BEGIN WordPress") ---
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# www -> apex. HTTP->HTTPS is already handled upstream on this host; a
+# %{HTTPS} check here could loop behind a TLS-terminating proxy, so it is
+# deliberately left out.
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://psychopenhars.com%{REQUEST_URI} [R=301,L,NE]
+
+# Removed pages and the old front-page slug -> home
+RewriteRule ^(?:index\.php/)?(?:colibri-wp|sample-page|cabinet-de-psychologues)/?$ / [R=301,L]
+
+# Old PATHINFO permalinks: /index.php/foo/ -> /foo/ (pages, feeds, wp-json...)
+RewriteRule ^index\.php/(.+)$ /$1 [R=301,L,NE]
+</IfModule>
+# --- end psychopenhars redirects ---
+
+# BEGIN WordPress
+# The directives (lines) between "BEGIN WordPress" and "END WordPress" are
+# dynamically generated, and should only be modified via WordPress filters.
+# Any changes to the directives between these markers will be overwritten.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress

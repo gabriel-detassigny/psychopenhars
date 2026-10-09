@@ -1,0 +1,183 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"color": {
+			"palette": [
+				{ "name": "Ivoire", "slug": "base", "color": "#FBF8F3" },
+				{ "name": "Encre", "slug": "contrast", "color": "#24323A" },
+				{ "name": "Sarcelle", "slug": "accent-1", "color": "#2F6B66" },
+				{ "name": "Sable", "slug": "accent-2", "color": "#F1EADF" },
+				{ "name": "Sarcelle foncé", "slug": "accent-3", "color": "#234F4B" },
+				{ "name": "Ardoise", "slug": "accent-4", "color": "#56626B" },
+				{ "name": "Sauge", "slug": "accent-5", "color": "#E3EBE1" },
+				{ "name": "Filet", "slug": "accent-6", "color": "#24323A26" }
+			]
+		},
+		"layout": {
+			"contentSize": "720px",
+			"wideSize": "1180px"
+		},
+		"typography": {
+			"fontFamilies": [
+				{
+					"name": "Manrope",
+					"slug": "manrope",
+					"fontFamily": "Manrope, sans-serif",
+					"fontFace": [
+						{
+							"src": [ "file:./assets/fonts/Manrope-VariableFont_wght.woff2" ],
+							"fontWeight": "200 800",
+							"fontStyle": "normal",
+							"fontFamily": "Manrope"
+						}
+					]
+				},
+				{
+					"name": "Literata",
+					"slug": "literata",
+					"fontFamily": "Literata, Georgia, serif",
+					"fontFace": [
+						{
+							"src": [ "file:./assets/fonts/Literata72pt-Regular.woff2" ],
+							"fontWeight": "400",
+							"fontStyle": "normal",
+							"fontFamily": "Literata"
+						},
+						{
+							"src": [ "file:./assets/fonts/Literata72pt-RegularItalic.woff2" ],
+							"fontWeight": "400",
+							"fontStyle": "italic",
+							"fontFamily": "Literata"
+						},
+						{
+							"src": [ "file:./assets/fonts/Literata72pt-SemiBold.woff2" ],
+							"fontWeight": "600",
+							"fontStyle": "normal",
+							"fontFamily": "Literata"
+						}
+					]
+				}
+			]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "var:preset|color|base",
+			"text": "var:preset|color|contrast"
+		},
+		"typography": {
+			"fontFamily": "var:preset|font-family|manrope",
+			"fontSize": "var:preset|font-size|medium",
+			"lineHeight": "1.65",
+			"letterSpacing": "0"
+		},
+		"elements": {
+			"heading": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|literata",
+					"fontWeight": "600",
+					"lineHeight": "1.2",
+					"letterSpacing": "-0.01em"
+				},
+				"color": {
+					"text": "var:preset|color|accent-3"
+				}
+			},
+			"link": {
+				"color": {
+					"text": "var:preset|color|accent-1"
+				},
+				"typography": {
+					"textDecoration": "underline"
+				},
+				":hover": {
+					"color": {
+						"text": "var:preset|color|accent-3"
+					}
+				}
+			},
+			"button": {
+				"color": {
+					"background": "var:preset|color|accent-1",
+					"text": "var:preset|color|base"
+				},
+				"border": {
+					"radius": "999px"
+				},
+				"typography": {
+					"fontWeight": "600"
+				},
+				"spacing": {
+					"padding": {
+						"top": "0.8rem",
+						"bottom": "0.8rem",
+						"left": "1.5rem",
+						"right": "1.5rem"
+					}
+				},
+				":hover": {
+					"color": {
+						"background": "var:preset|color|accent-3",
+						"text": "var:preset|color|base"
+					}
+				},
+				":focus": {
+					"color": {
+						"background": "var:preset|color|accent-3",
+						"text": "var:preset|color|base"
+					}
+				}
+			}
+		},
+		"blocks": {
+			"core/navigation": {
+				"typography": {
+					"fontSize": "var:preset|font-size|small",
+					"fontWeight": "500"
+				},
+				"elements": {
+					"link": {
+						"typography": {
+							"textDecoration": "none"
+						},
+						":hover": {
+							"typography": {
+								"textDecoration": "underline"
+							}
+						}
+					}
+				}
+			},
+			"core/site-title": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|literata",
+					"fontWeight": "600",
+					"fontSize": "var:preset|font-size|large"
+				},
+				"elements": {
+					"link": {
+						"color": {
+							"text": "var:preset|color|accent-3"
+						},
+						"typography": {
+							"textDecoration": "none"
+						}
+					}
+				}
+			},
+			"core/separator": {
+				"color": {
+					"text": "var:preset|color|accent-6"
+				}
+			},
+			"core/list": {
+				"spacing": {
+					"padding": {
+						"left": "1.25em"
+					}
+				}
+			}
+		}
+	}
+}

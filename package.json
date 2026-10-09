@@ -1,0 +1,16 @@
+{
+	"name": "psychopenhars",
+	"private": true,
+	"description": "psychopenhars.com: WordPress 7.1 + Twenty Twenty-Five child theme, migration scripts.",
+	"scripts": {
+		"start": "wp-env start && bash bin/after-start.sh",
+		"stop": "wp-env stop",
+		"reset": "wp-env reset development && wp-env start && bash bin/after-start.sh",
+		"cli": "wp-env run cli",
+		"seed": "wp-env run cli wp eval-file wp-content/psy-local/seed.php",
+		"check-redirects": "bash scripts/check-redirects.sh http://psychopenhars.wpenv.net"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^11.17.0"
+	}
+}

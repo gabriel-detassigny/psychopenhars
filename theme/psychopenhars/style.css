@@ -1,0 +1,59 @@
+/*
+Theme Name: Psychopenhars
+Theme URI: https://psychopenhars.com/
+Description: Thème enfant de Twenty Twenty-Five pour le cabinet de psychologues de Quimper.
+Template: twentytwentyfive
+Version: 1.0.0
+Requires at least: 7.0
+Requires PHP: 8.1
+Text Domain: psychopenhars
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+.psy-initials {
+	display: grid;
+	place-items: center;
+	width: 3.5rem;
+	height: 3.5rem;
+	margin: 0;
+	border-radius: 50%;
+	background: var(--wp--preset--color--accent-1);
+	color: var(--wp--preset--color--base);
+	font-family: var(--wp--preset--font-family--literata);
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.psy-card a,
+.psy-email a {
+	font-weight: 600;
+}
+
+.psy-email {
+	overflow-wrap: anywhere;
+}
+
+.psy-content > h2 {
+	margin-top: var(--wp--preset--spacing--60);
+}
+
+.psy-tagline {
+	margin: 0;
+}
+
+.psy-footer-links {
+	list-style: none;
+	padding-left: 0;
+}
+
+:where(a, button, .wp-element-button):focus-visible {
+	outline: 2px solid var(--wp--preset--color--accent-1);
+	outline-offset: 3px;
+}
+
+@media (max-width: 781px) {
+	.wp-block-buttons.psy-header-cta {
+		display: none;
+	}
+}
