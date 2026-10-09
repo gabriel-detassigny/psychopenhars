@@ -22,6 +22,7 @@ Requires Node and Docker (or Podman with the Docker socket). `*.wpenv.net` resol
 
 ```sh
 npm install
+cp .wp-env.override.example.json .wp-env.override.json   # first time only
 npm start            # wp-env start + fetch sample uploads + seed pages
 npm run check-redirects
 npm run cli -- wp option get permalink_structure
@@ -29,7 +30,8 @@ npm stop
 ```
 
 - Site: http://psychopenhars.wpenv.net. Admin: `/wp-admin` with `admin` / `password`.
-- Port 80 and the URL come from `.wp-env.override.json`. Change the port there if 80 is taken.
+- Port 80 and the URL come from `.wp-env.override.json` (not committed, per-machine).
+  Create it with `cp .wp-env.override.example.json .wp-env.override.json`. Without it, wp-env uses http://localhost:8888.
 - `server/htaccess.example` is mapped as the site's `.htaccess`, so the redirect rules are tested on real Apache.
   It's a single-file bind mount, so after editing it with a tool that replaces the file (e.g. `sed -i`),
   restart the container: `docker restart $(docker ps -qf name=psychopenhars.*wordpress-1)`.

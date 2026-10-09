@@ -1,0 +1,7 @@
+{
+	"port": 80,
+	"config": {
+		"WP_SITEURL": "http://psychopenhars.wpenv.net",
+		"WP_HOME": "http://psychopenhars.wpenv.net"
+	}
+}
