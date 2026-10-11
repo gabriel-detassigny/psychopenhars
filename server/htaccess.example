@@ -1,21 +1,34 @@
-# Full target .htaccess for the site root. Merge with anything host-specific
-# already present in the live file (compare before overwriting).
+# Target .htaccess for the site root on OVH, in order: the host's existing
+# HTTPS rule (kept unchanged by scripts/migrate.sh), the legacy redirects,
+# then the WordPress block. Locally, wp-env serves a copy of this file
+# (local/.htaccess); the OVH rule is commented out here because %{ENV:HTTPS}
+# is never set locally and it would redirect everything to https.
 
-# --- psychopenhars: legacy URL redirects (place ABOVE "# BEGIN WordPress") ---
+# RewriteEngine On
+# RewriteCond %{ENV:HTTPS} !on
+# RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# --- psychopenhars: legacy URL redirects (after the host's HTTPS rule, ABOVE "# BEGIN WordPress") ---
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# www -> apex. HTTP->HTTPS is already handled upstream on this host; a
-# %{HTTPS} check here could loop behind a TLS-terminating proxy, so it is
-# deliberately left out.
-RewriteCond %{HTTP_HOST} ^www\. [NC]
-RewriteRule ^ https://psychopenhars.com%{REQUEST_URI} [R=301,L,NE]
+# Scheme for absolute redirect targets. OVH terminates TLS upstream and
+# exposes it as %{ENV:HTTPS}; plain Apache (local wp-env) uses %{HTTPS}.
+# Absolute targets avoid Apache emitting "https://host:443/..." Locations.
+RewriteRule ^ - [E=PSY_SCHEME:http]
+RewriteCond %{ENV:HTTPS} =on [OR]
+RewriteCond %{HTTPS} =on
+RewriteRule ^ - [E=PSY_SCHEME:https]
+
+# www -> apex
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ %{ENV:PSY_SCHEME}://%1%{REQUEST_URI} [R=301,L,NE]
 
 # Removed pages and the old front-page slug -> home
-RewriteRule ^(?:index\.php/)?(?:colibri-wp|sample-page|cabinet-de-psychologues)/?$ / [R=301,L]
+RewriteRule ^(?:index\.php/)?(?:colibri-wp|sample-page|cabinet-de-psychologues)/?$ %{ENV:PSY_SCHEME}://%{HTTP_HOST}/ [R=301,L]
 
 # Old PATHINFO permalinks: /index.php/foo/ -> /foo/ (pages, feeds, wp-json...)
-RewriteRule ^index\.php/(.+)$ /$1 [R=301,L,NE]
+RewriteRule ^index\.php/(.+)$ %{ENV:PSY_SCHEME}://%{HTTP_HOST}/$1 [R=301,L,NE]
 </IfModule>
 # --- end psychopenhars redirects ---
 

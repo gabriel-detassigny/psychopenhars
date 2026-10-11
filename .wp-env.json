@@ -8,10 +8,9 @@
 		"./theme/psychopenhars"
 	],
 	"mappings": {
-		".htaccess": "./server/htaccess.example",
+		".htaccess": "./local/.htaccess",
 		"wp-content/uploads": "./local/uploads",
-		"wp-content/psy-local": "./local",
-		"wp-content/psy-content": "./content"
+		"wp-content/psy-repo": "."
 	},
 	"config": {
 		"WP_DEBUG": true,

@@ -6,4 +6,4 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 bash bin/fetch-uploads.sh
-npx wp-env run cli wp eval-file wp-content/psy-local/seed.php
+npm run -s seed

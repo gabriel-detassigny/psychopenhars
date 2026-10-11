@@ -8,7 +8,7 @@
  * @package psychopenhars
  */
 
-$content_dir = WP_CONTENT_DIR . '/psy-content';
+$content_dir = WP_CONTENT_DIR . '/psy-repo/content';
 // Same IDs and slugs as production, so legacy URLs (?page_id=N,
 // /index.php/<slug>/) resolve exactly as they will on the live site.
 $pages = array(

@@ -3,12 +3,14 @@
 	"private": true,
 	"description": "psychopenhars.com: WordPress 7.1 + Twenty Twenty-Five child theme, migration scripts.",
 	"scripts": {
-		"start": "wp-env start && bash bin/after-start.sh",
+		"start": "cp -f server/htaccess.example local/.htaccess 2>/dev/null || true; wp-env start && bash bin/after-start.sh",
 		"stop": "wp-env stop",
 		"reset": "wp-env reset development && wp-env start && bash bin/after-start.sh",
 		"cli": "wp-env run cli",
-		"seed": "wp-env run cli wp eval-file wp-content/psy-local/seed.php",
-		"check-redirects": "bash scripts/check-redirects.sh http://psychopenhars.wpenv.net"
+		"seed": "wp-env run cli wp eval-file wp-content/psy-repo/local/seed.php",
+		"check-redirects": "bash scripts/check-redirects.sh http://psychopenhars.wpenv.net",
+		"sync-htaccess": "rm -f local/.htaccess && cp server/htaccess.example local/.htaccess && docker restart $(docker ps -qf name=psychopenhars.*wordpress-1)",
+		"rehearse": "bash bin/rehearse-migration.sh"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^11.17.0"
