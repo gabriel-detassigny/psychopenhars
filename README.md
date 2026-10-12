@@ -81,8 +81,9 @@ rm -rf wp-content && tar -xzf $B/wp-content.tgz
 cp $B/htaccess .htaccess
 ```
 
-## Open content questions
+## Content status
 
-- `quimper.jpg` (homepage hero) has an EXIF copyright of "bbsferrari", which looks like a stock photo. Confirm the licence, or replace it with your own photo of Quimper or the new office.
-- Office photos on the old site show the previous premises (Centre Delta / Creac'h Gwen), so they're no longer used. Photos of the new Résidence St Corentin office would help.
-- Gwennaïg has no portrait on the site. Home cards use initials for both practitioners so they stay consistent.
+- Page content signed off by both practitioners (2026-10-12).
+- `quimper.jpg` (homepage hero): licence confirmed (2026-10-12).
+- Possible later improvements: photos of the new Résidence St Corentin office, and a portrait of Gwennaïg.
+  Until then, the home cards use initials for both practitioners.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Download the few live-site images the theme patterns and content reference.
-# They are not committed (see the licence note on quimper.jpg in README.md).
+# They live in the production media library, so they are not duplicated in git.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
