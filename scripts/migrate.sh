@@ -127,9 +127,14 @@ touch "$WP_PATH/.htaccess"
 if ! grep -q 'psychopenhars: legacy URL redirects' "$WP_PATH/.htaccess"; then
 	{ echo; cat "$REPO/server/htaccess-redirects.conf"; } >> "$WP_PATH/.htaccess"
 fi
-if ! grep -q '# BEGIN WordPress' "$WP_PATH/.htaccess"; then
+# Anchored: the redirects block's header comment also mentions "# BEGIN WordPress".
+if ! grep -q '^# BEGIN WordPress' "$WP_PATH/.htaccess"; then
 	{ echo; sed -n '/^# BEGIN WordPress/,/^# END WordPress/p' "$REPO/server/htaccess.example"; } >> "$WP_PATH/.htaccess"
 fi
+grep -q '^RewriteRule \. /index\.php \[L\]' "$WP_PATH/.htaccess" || {
+	echo "The WordPress rewrite block is missing from $WP_PATH/.htaccess: clean URLs will 404" >&2
+	exit 1
+}
 wp rewrite flush
 wp cache flush
 
