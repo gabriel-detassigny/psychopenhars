@@ -86,10 +86,24 @@ the site folder; double-check the `cd` target:
 ```sh
 cd ~/psychopenhars                      # the live WordPress folder
 ~/bin/wp core download --version=5.8.18 --force --skip-content
-~/bin/wp eval-file ~/psychopenhars-migration-<commit>/scripts/db-restore.php $B/db.sql.gz --skip-plugins --skip-themes
+~/bin/wp eval-file $B/db-restore.php $B/db.sql.gz --skip-plugins --skip-themes
 rm -rf wp-content && tar -xzf $B/wp-content.tgz
 cp $B/htaccess .htaccess
 ```
+
+## Production status
+
+- Migrated 2026-10-12: WordPress 7.1.3, `psychopenhars` child theme of Twenty Twenty-Five, clean
+  permalinks, legacy redirects in `.htaccess`.
+- Cleanup done the same day: upload folders removed; unused themes (Twenty Seventeen to Twenty
+  Twenty-Four) and plugins (Akismet, Colibri Page Builder, Hello Dolly) deleted with their language
+  files; leftover `plugin` tables dropped; no plugins installed.
+- Automatic updates: `WP_AUTO_UPDATE_CORE` is `true` (major and minor). Twenty Twenty-Five
+  auto-updates are on. The child theme is deployed from this repo.
+- Backups on the server: `~/psychopenhars-backup-20261012-105931` and `-111256`. Each holds
+  `db.sql.gz`, `wp-content.tgz`, `htaccess` and `db-restore.php`; `-111256` also has `wp-config.php.bak`.
+- On OVH, `wp plugin delete` reports a false failure (spawned process exit code -1) even though
+  the folder is removed. Check the plugins folder rather than trusting the message.
 
 ## Content status
 
