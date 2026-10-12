@@ -2,9 +2,10 @@
 # One-shot migration of psychopenhars.com: WP 5.8 + Colibri -> WP 7.1 +
 # Twenty Twenty-Five child theme + clean permalinks.
 #
-# Run ON THE SERVER from the repo copy uploaded there:
-#   WP_PATH=~/www scripts/migrate.sh preflight   # checks + backup, changes nothing
-#   WP_PATH=~/www scripts/migrate.sh run         # backup + full migration
+# Run ON THE SERVER from the copy uploaded by bin/upload.sh, which lives
+# OUTSIDE the site (~/psychopenhars-migration-<commit>):
+#   WP_PATH=~/psychopenhars scripts/migrate.sh preflight   # checks + backup, changes nothing
+#   WP_PATH=~/psychopenhars scripts/migrate.sh run         # backup + full migration
 #
 # Written for OVH shared hosting: no mysql/mysqldump binary (the DB backup
 # uses scripts/db-dump.php through WP-CLI) and no rsync.
@@ -25,6 +26,18 @@ SKIP_THEME_INSTALL="${SKIP_THEME_INSTALL:-0}"
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="${BACKUP_DIR:-$HOME/psychopenhars-backup-$STAMP}"
+
+# Guard against pointing at the wrong folder: WP_PATH must be a WordPress
+# install, and this repo copy must live outside it (and vice versa).
+WP_PATH="$(cd "$WP_PATH" && pwd -P)"
+REPO="$(cd "$REPO" && pwd -P)"
+[[ -f "$WP_PATH/wp-includes/version.php" ]] || { echo "$WP_PATH is not a WordPress install (no wp-includes/version.php)" >&2; exit 1; }
+# Only the local rehearsal (repo mounted at wp-content/psy-repo) may skip this.
+if [[ "${ALLOW_REPO_INSIDE_WP:-0}" != "1" ]]; then
+	case "$REPO/" in "$WP_PATH/"*) echo "Repo copy ($REPO) is inside WP_PATH ($WP_PATH); upload it elsewhere" >&2; exit 1 ;; esac
+fi
+case "$WP_PATH/" in "$REPO/"*) echo "WP_PATH ($WP_PATH) is inside the repo copy ($REPO)" >&2; exit 1 ;; esac
+case "$BACKUP/" in "$WP_PATH/"*) echo "BACKUP_DIR ($BACKUP) must be outside WP_PATH, it would be served publicly" >&2; exit 1 ;; esac
 
 wp() { command "$WP_BIN" --path="$WP_PATH" "$@"; }
 # For steps that must not load the old theme (it may not survive WP 7.1).

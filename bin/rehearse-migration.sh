@@ -47,7 +47,7 @@ wp_cli eval-file /var/www/html/wp-content/psy-repo/scripts/db-restore.php /var/w
 rm -f local/.prod-import.sql.gz
 
 echo "== Run scripts/migrate.sh run"
-in_cli env WP_PATH=/var/www/html SITE_URL="$LOCAL_URL" SKIP_THEME_INSTALL=1 BACKUP_DIR=/tmp/rehearsal-backup \
+in_cli env WP_PATH=/var/www/html SITE_URL="$LOCAL_URL" SKIP_THEME_INSTALL=1 ALLOW_REPO_INSIDE_WP=1 BACKUP_DIR=/tmp/rehearsal-backup \
 	bash /var/www/html/wp-content/psy-repo/scripts/migrate.sh run
 
 echo "== Point remaining production URLs at the local site"

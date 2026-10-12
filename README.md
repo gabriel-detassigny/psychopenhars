@@ -13,6 +13,7 @@ a Twenty Twenty-Five child theme, with clean permalinks.
 | `server/htaccess.example` | What the full `.htaccess` should look like afterwards |
 | `scripts/migrate.sh` | Server-side migration: `preflight` (checks + backup) or `run` (backup, core update, themes, content, permalinks, .htaccess) |
 | `scripts/db-dump.php`, `scripts/db-restore.php` | DB backup/restore through `wp eval-file`, for hosts without mysql binaries |
+| `bin/upload.sh` | Uploads the committed repo to a new `~/psychopenhars-migration-<commit>` folder on the server; never deletes |
 | `bin/rehearse-migration.sh` | `npm run rehearse -- <backup-dir>`: runs the real migration locally on a production backup |
 | `scripts/check-redirects.sh` | Checks old URLs → single 301 → 200, and that no legacy links remain |
 | `.wp-env.json`, `.wp-env.override.json` | Local environment (WP 7.1.3, PHP 8.3, Apache) at http://psychopenhars.wpenv.net |
@@ -50,33 +51,41 @@ backups use `scripts/db-dump.php` / `scripts/db-restore.php` through `wp eval-fi
 The live `.htaccess` starts with OVH's HTTPS rule (`%{ENV:HTTPS}`). `migrate.sh`
 keeps it first and appends the redirects, then the WordPress block.
 
-`OVH` below is your SSH target (e.g. `user@ssh.clusterXXX.hosting.ovh.net`), and
-`~/www` is the WordPress root. Adjust both if they differ.
+`OVH` below is your SSH target (e.g. `user@ssh.clusterXXX.hosting.ovh.net`).
+The live WordPress folder is `~/psychopenhars`. The migration scripts are uploaded to a
+**separate** folder, `~/psychopenhars-migration-<commit>`, and never into the site itself.
+`M` below stands for that folder.
 
-1. **Upload the repo** (tracked files only):
-   `git archive HEAD | ssh OVH 'rm -rf psychopenhars && mkdir psychopenhars && tar -x -C psychopenhars'`
-2. **Preflight + backup** (changes nothing):
-   `ssh OVH 'WP_PATH=~/www psychopenhars/scripts/migrate.sh preflight'`
+1. **Upload the scripts** (committed files only, nothing on the server is deleted):
+   `bin/upload.sh OVH`
+   This creates `~/psychopenhars-migration-<commit>` and aborts if that folder already exists.
+2. **Preflight + backup** (changes nothing on the site):
+   `ssh OVH 'WP_PATH=~/psychopenhars M/scripts/migrate.sh preflight'`
    This checks PHP/DB versions and the expected pages, prints the current `.htaccess`, and
    writes `~/psychopenhars-backup-<date>/` (`db.sql.gz`, `wp-content.tgz`, `htaccess`).
+   It refuses to run if `WP_PATH` isn't a WordPress install, if the scripts folder and the site
+   folder overlap, or if the backup would land inside the site (publicly reachable).
    For an extra safety net, also take a database backup in the OVH Manager.
 3. **Rehearse locally** on that exact backup:
    `scp -r OVH:psychopenhars-backup-<date> local/prod-backup && npm run rehearse -- local/prod-backup`
    This imports it into wp-env (handling a non-`wp_` table prefix), runs the real
    `migrate.sh run`, and runs the redirect checks. Review http://psychopenhars.wpenv.net
    (log in with your production credentials). `npm run reset` goes back to the demo site.
-4. **Go live**: `ssh OVH 'WP_PATH=~/www psychopenhars/scripts/migrate.sh run'`
+4. **Go live**: `ssh OVH 'WP_PATH=~/psychopenhars M/scripts/migrate.sh run'`
    This takes a fresh backup first, then core 7.1.3, themes, content, Colibri removal, URLs, `.htaccess`.
 5. **Verify** from your machine: `scripts/check-redirects.sh https://psychopenhars.com`.
    Then check each page on a phone.
 6. **Search Console**: submit `https://psychopenhars.com/wp-sitemap.xml`.
+7. **Clean up** once you're happy: remove `~/psychopenhars-migration-<commit>` on the server.
+   Keep the `~/psychopenhars-backup-*` folders for a while.
 
-**Rollback** (on the server, `B=~/psychopenhars-backup-<date>`):
+**Rollback** (on the server, `B=~/psychopenhars-backup-<date>`). This restores files *inside*
+the site folder; double-check the `cd` target:
 
 ```sh
-cd ~/www
+cd ~/psychopenhars                      # the live WordPress folder
 wp core download --version=5.8.18 --force --skip-content
-wp eval-file ~/psychopenhars/scripts/db-restore.php $B/db.sql.gz --skip-plugins --skip-themes
+wp eval-file ~/psychopenhars-migration-<commit>/scripts/db-restore.php $B/db.sql.gz --skip-plugins --skip-themes
 rm -rf wp-content && tar -xzf $B/wp-content.tgz
 cp $B/htaccess .htaccess
 ```
