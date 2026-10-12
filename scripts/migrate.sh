@@ -72,7 +72,8 @@ chmod 700 "$BACKUP"
 printf '%s\n' '<IfModule mod_authz_core.c>' 'Require all denied' '</IfModule>' '<IfModule !mod_authz_core.c>' 'Deny from all' '</IfModule>' > "$BACKUP/.htaccess"
 wp_bare eval-file "$REPO/scripts/db-dump.php" "$BACKUP/db.sql.gz"
 [[ -f "$WP_PATH/.htaccess" ]] && cp "$WP_PATH/.htaccess" "$BACKUP/htaccess"
-tar -czf "$BACKUP/wp-content.tgz" -C "$WP_PATH" wp-content
+# psy-repo only exists in the local rehearsal (the repo mounted into wp-env).
+tar -czf "$BACKUP/wp-content.tgz" -C "$WP_PATH" --exclude=wp-content/psy-repo wp-content
 echo "$current" > "$BACKUP/core-version.txt"
 ls -lh "$BACKUP"
 
