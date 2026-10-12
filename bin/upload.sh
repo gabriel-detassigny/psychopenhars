@@ -15,4 +15,6 @@ git archive HEAD | ssh "$TARGET" "set -e
 	if [ -e \"\$HOME/$DIR\" ]; then echo \"\$HOME/$DIR already exists, not touching it.\" >&2; exit 1; fi
 	mkdir \"\$HOME/$DIR\"
 	tar -x -C \"\$HOME/$DIR\"
+	chmod 700 \"\$HOME/$DIR\"
+	printf '%s\\n' '<IfModule mod_authz_core.c>' 'Require all denied' '</IfModule>' '<IfModule !mod_authz_core.c>' 'Deny from all' '</IfModule>' > \"\$HOME/$DIR/.htaccess\"
 	echo \"Uploaded to \$HOME/$DIR\""

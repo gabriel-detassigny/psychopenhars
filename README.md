@@ -51,7 +51,8 @@ backups use `scripts/db-dump.php` / `scripts/db-restore.php` through `wp eval-fi
 The live `.htaccess` starts with OVH's HTTPS rule (`%{ENV:HTTPS}`). `migrate.sh`
 keeps it first and appends the redirects, then the WordPress block.
 
-`OVH` below is your SSH target (e.g. `user@ssh.clusterXXX.hosting.ovh.net`).
+`OVH` below is your SSH target (an `ovh` alias in `~/.ssh/config`). WP-CLI is at `~/bin/wp`, which
+is not on the PATH of non-interactive SSH commands, hence `WP_BIN`.
 The live WordPress folder is `~/psychopenhars`. The migration scripts are uploaded to a
 **separate** folder, `~/psychopenhars-migration-<commit>`, and never into the site itself.
 `M` below stands for that folder.
@@ -60,7 +61,7 @@ The live WordPress folder is `~/psychopenhars`. The migration scripts are upload
    `bin/upload.sh OVH`
    This creates `~/psychopenhars-migration-<commit>` and aborts if that folder already exists.
 2. **Preflight + backup** (changes nothing on the site):
-   `ssh OVH 'WP_PATH=~/psychopenhars M/scripts/migrate.sh preflight'`
+   `ssh OVH 'WP_BIN=~/bin/wp WP_PATH=~/psychopenhars M/scripts/migrate.sh preflight'`
    This checks PHP/DB versions and the expected pages, prints the current `.htaccess`, and
    writes `~/psychopenhars-backup-<date>/` (`db.sql.gz`, `wp-content.tgz`, `htaccess`).
    It refuses to run if `WP_PATH` isn't a WordPress install, if the scripts folder and the site
@@ -71,7 +72,7 @@ The live WordPress folder is `~/psychopenhars`. The migration scripts are upload
    This imports it into wp-env (handling a non-`wp_` table prefix), runs the real
    `migrate.sh run`, and runs the redirect checks. Review http://psychopenhars.wpenv.net
    (log in with your production credentials). `npm run reset` goes back to the demo site.
-4. **Go live**: `ssh OVH 'WP_PATH=~/psychopenhars M/scripts/migrate.sh run'`
+4. **Go live**: `ssh OVH 'WP_BIN=~/bin/wp WP_PATH=~/psychopenhars M/scripts/migrate.sh run'`
    This takes a fresh backup first, then core 7.1.3, themes, content, Colibri removal, URLs, `.htaccess`.
 5. **Verify** from your machine: `scripts/check-redirects.sh https://psychopenhars.com`.
    Then check each page on a phone.
@@ -84,8 +85,8 @@ the site folder; double-check the `cd` target:
 
 ```sh
 cd ~/psychopenhars                      # the live WordPress folder
-wp core download --version=5.8.18 --force --skip-content
-wp eval-file ~/psychopenhars-migration-<commit>/scripts/db-restore.php $B/db.sql.gz --skip-plugins --skip-themes
+~/bin/wp core download --version=5.8.18 --force --skip-content
+~/bin/wp eval-file ~/psychopenhars-migration-<commit>/scripts/db-restore.php $B/db.sql.gz --skip-plugins --skip-themes
 rm -rf wp-content && tar -xzf $B/wp-content.tgz
 cp $B/htaccess .htaccess
 ```

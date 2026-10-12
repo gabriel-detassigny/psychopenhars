@@ -67,6 +67,9 @@ done
 
 echo "== Backup -> $BACKUP"
 mkdir -p "$BACKUP"
+# The hosting home may be web-reachable through another domain: keep backups private.
+chmod 700 "$BACKUP"
+printf '%s\n' '<IfModule mod_authz_core.c>' 'Require all denied' '</IfModule>' '<IfModule !mod_authz_core.c>' 'Deny from all' '</IfModule>' > "$BACKUP/.htaccess"
 wp_bare eval-file "$REPO/scripts/db-dump.php" "$BACKUP/db.sql.gz"
 [[ -f "$WP_PATH/.htaccess" ]] && cp "$WP_PATH/.htaccess" "$BACKUP/htaccess"
 tar -czf "$BACKUP/wp-content.tgz" -C "$WP_PATH" wp-content
