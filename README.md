@@ -97,11 +97,10 @@ cp $B/htaccess .htaccess
   permalinks, legacy redirects in `.htaccess`.
 - Cleanup done the same day: upload folders removed; unused themes (Twenty Seventeen to Twenty
   Twenty-Four) and plugins (Akismet, Colibri Page Builder, Hello Dolly) deleted with their language
-  files; leftover `plugin` tables dropped; no plugins installed.
+  files; leftover plugin tables dropped; no plugins installed.
 - Automatic updates: `WP_AUTO_UPDATE_CORE` is `true` (major and minor). Twenty Twenty-Five
   auto-updates are on. The child theme is deployed from this repo.
-- Backups on the server: `~/psychopenhars-backup-20261012-105931` and `-111256`. Each holds
-  `db.sql.gz`, `wp-content.tgz`, `htaccess` and `db-restore.php`; `-111256` also has `wp-config.php.bak`.
+- Pre-migration backups are kept on the server, outside the web root (see the runbook for their layout).
 - On OVH, `wp plugin delete` reports a false failure (spawned process exit code -1) even though
   the folder is removed. Check the plugins folder rather than trusting the message.
 
